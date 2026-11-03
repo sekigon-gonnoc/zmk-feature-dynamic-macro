@@ -105,15 +105,15 @@ def contribute(context):
     value = context.node_value
     managers = [n for n in nodes if n.status == "okay" and "sekigon,dynamic-macro-manager" in set(n.compats)]
     behaviors = [n for n in nodes if n.status == "okay" and "sekigon,dynamic-behavior-macro" in set(n.compats)]
-    if not behaviors:
-        return []
-
     maximum = context.config_values.get("CONFIG_ZMK_DYNAMIC_MACRO_MAX_SLOTS", len(behaviors))
     if type(maximum) is not int or maximum < len(behaviors):
         raise ValueError(
             "macro dispatcher count exceeds "
             f"CONFIG_ZMK_DYNAMIC_MACRO_MAX_SLOTS={maximum}"
         )
+    if maximum == 0:
+        return []
+
     max_instructions = context.config_values.get(
         "CONFIG_ZMK_DYNAMIC_MACRO_MAX_INSTRUCTIONS", 32
     )
@@ -128,7 +128,8 @@ def contribute(context):
         raise ValueError("sekigon,dynamic-macro-manager record-max-length must be in 8..540")
 
     groups = []
-    settings_device = behaviors[0]
+    settings_device = behaviors[0] if behaviors else managers[0]
+    default_target_role = value(settings_device, "target-role", context.default_target_role())
     layout_setting = SimpleNamespace(
         status="okay",
         compats={"sekigon,dynamic-setting"},
@@ -157,9 +158,8 @@ def contribute(context):
     for slot in range(maximum):
         behavior = behaviors[slot] if slot < len(behaviors) else SimpleNamespace(
             status="okay", compats={"sekigon,dynamic-behavior-macro"},
-            props={"target-role": SimpleNamespace(
-                val=value(settings_device, "target-role", "keyboard-right")
-            )}, labels=[f"macro_slot{slot}"], name=f"macro_slot{slot}",
+            props={"target-role": SimpleNamespace(val=default_target_role)},
+            labels=[f"macro_slot{slot}"], name=f"macro_slot{slot}",
         )
         labels = getattr(behavior, "labels", [])
         if not labels or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", labels[0]):
@@ -187,8 +187,9 @@ def contribute(context):
             "module-name": "macro", "group-name": "slot", "instance-name": f"slot{slot}",
             "label": f"Macro {slot + 1}", "scope": "shared", "format-version": 1,
             "slot-index": slot,
-            "target-role": value(behavior, "target-role", "keyboard-right"),
-            "actual-device": behavior if slot < len(behaviors) else settings_device,
+            "target-role": value(behavior, "target-role", default_target_role),
+            "actual-device": behavior if slot < len(behaviors) else None,
+            "record-on-change-context-free": slot >= len(behaviors),
             "record-type": "macro-v1", "record-max-length": max_length,
             "record-default": record, "record-on-change": "dynamic_macro_record_changed",
         }))
