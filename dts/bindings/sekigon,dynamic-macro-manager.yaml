@@ -6,4 +6,4 @@ properties:
   record-max-length:
     type: int
     required: false
-    default: 256
+    default: 128
