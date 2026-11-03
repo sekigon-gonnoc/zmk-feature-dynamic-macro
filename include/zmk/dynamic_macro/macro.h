@@ -1,0 +1,26 @@
+/* SPDX-License-Identifier: MIT */
+
+#pragma once
+
+#include <stdint.h>
+
+#include <zmk/dynamic_settings/store.h>
+
+#define DYNAMIC_MACRO_MAX_INSTRUCTIONS CONFIG_ZMK_DYNAMIC_MACRO_MAX_INSTRUCTIONS
+#define DYNAMIC_MACRO_MAX_TEXT_BYTES 64
+#define DYNAMIC_MACRO_MAX_RECORD_LENGTH 540
+#define DYNAMIC_MACRO_MAX_DURATION_MS 30000
+
+enum dynamic_macro_action {
+    DYNAMIC_MACRO_ACTION_BEHAVIOR_TAP = 1,
+    DYNAMIC_MACRO_ACTION_BEHAVIOR_PRESS = 2,
+    DYNAMIC_MACRO_ACTION_BEHAVIOR_RELEASE = 3,
+    DYNAMIC_MACRO_ACTION_WAIT = 4,
+    DYNAMIC_MACRO_ACTION_TEXT_ASCII = 5,
+    DYNAMIC_MACRO_ACTION_PAUSE_FOR_RELEASE = 6,
+    DYNAMIC_MACRO_ACTION_SET_TAP_MS = 7,
+    DYNAMIC_MACRO_ACTION_SET_WAIT_MS = 8,
+};
+
+/* Records store slot defaults in the header; timing controls update them in
+ * sequence. */

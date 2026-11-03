@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: MIT
+
+description: Runtime macro slot dispatcher
+compatible: "sekigon,dynamic-behavior-macro"
+include: zero_param.yaml
+properties:
+  bindings:
+    type: phandle-array
+    description: Initial macro program using the standard ZMK macro binding syntax, including pause-for-release.
+  wait-ms:
+    type: int
+    description: Slot-wide default wait time in milliseconds between macro bindings.
+  tap-ms:
+    type: int
+    description: Slot-wide default hold time in milliseconds for tapped macro bindings.
+  record-max-length:
+    type: int
+    description: Maximum stored record length for this macro slot.
+  record-default:
+    type: array
+    description: Initial encoded macro record as byte values (0..255); cannot be combined with bindings.
+  target-role:
+    type: string
+    description: Studio settings target role for this macro slot.

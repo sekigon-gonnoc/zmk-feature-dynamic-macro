@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: MIT
+
+config ZMK_DYNAMIC_MACRO
+	bool "Nemu-link runtime macro behaviors"
+	depends on ZMK_STUDIO_RPC
+	depends on ZMK_DYNAMIC_SETTINGS
+	depends on ZMK_BEHAVIOR_LOCAL_IDS
+	depends on DT_HAS_SEKIGON_DYNAMIC_BEHAVIOR_MACRO_ENABLED
+	depends on DT_HAS_SEKIGON_DYNAMIC_MACRO_MANAGER_ENABLED
+	default y
+	help
+	  Enable bounded runtime macro slots edited through the Nemu-link settings schema.
+
+config ZMK_DYNAMIC_MACRO_MAX_SLOTS
+	int "Maximum number of runtime macro slots"
+	depends on ZMK_DYNAMIC_MACRO
+	range 1 32
+	default 4
+	help
+	  Maximum number of generated Settings record groups and macro behavior dispatchers. The schema
+	  generator creates empty record groups when fewer behavior nodes are declared.
+
+config ZMK_DYNAMIC_MACRO_MAX_INSTRUCTIONS
+	int "Maximum number of instructions per runtime macro slot"
+	depends on ZMK_DYNAMIC_MACRO
+	range 1 32
+	default 32
+	help
+	  Limit the number of instructions accepted in each macro record. Larger values also increase
+	  the maximum number of bindings tracked during execution and cleanup.
+
+config ZMK_DYNAMIC_MACRO_MINIMUM_INTERVAL_MS
+	int "Macro key down and character interval"
+	depends on ZMK_DYNAMIC_MACRO
+	default 5
+	help
+	  With Bluetooth enabled, macro uses the BLE minimum connection interval for all
+	  transports. When Bluetooth is disabled, this fallback interval is used.

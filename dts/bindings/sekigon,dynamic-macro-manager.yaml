@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: MIT
+
+description: Nemu-link module macro record size configuration
+compatible: "sekigon,dynamic-macro-manager"
+properties:
+  record-max-length:
+    type: int
+    required: false
+    default: 256

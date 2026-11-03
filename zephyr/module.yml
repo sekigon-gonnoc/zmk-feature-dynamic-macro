@@ -1,0 +1,6 @@
+name: zmk-feature-dynamic-macro
+build:
+  cmake: .
+  kconfig: Kconfig
+  settings:
+    dts_root: .
